@@ -40,6 +40,7 @@ namespace online_offline_Scanning
             Tip.Text = "Please scan the TVSN";
             label6.Text = "Please scan the TVSN";
             this.tabControl1.SelectedIndex = Convert.ToInt32(ConfigurationManager.AppSettings["Pagestate"]);
+            this.WindowState = FormWindowState.Maximized;
             saveFileDialog1.Filter = " Excel files(*.xls)|*.xls";
         }
 
@@ -84,86 +85,81 @@ namespace online_offline_Scanning
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter) return;
+            switch (listBox1.Items.Count)
             {
-                switch (listBox1.Items.Count)
+                case 0:
                 {
-                    case 0:
-                        {
-                            if (textBox1.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["TVSN"]))
-                            {
-                                MessageBox.Show("The length of the TVSN:  " +textBox1.Text.Trim()+ "  is not match!");
-                            }
-                            else
-                            {
-                                listBox1.Items.Add(textBox1.Text.Trim());
-                                Tip.Text = "Please scan the Mainboard number";
-                            }
-                            textBox1.Text = "";
+                    if (textBox1.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["TVSN"]))
+                    {
+                        MessageBox.Show("The length of the TVSN:  " +textBox1.Text.Trim()+ "  is not match!");
+                    }
+                    else
+                    {
+                        listBox1.Items.Add(textBox1.Text.Trim());
+                        Tip.Text = "Please scan the Mainboard number";
+                    }
+                    textBox1.Text = "";
                             
-                            break;
-                        }
-                    case 1:
-                        {
-                            if (textBox1.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Mainboard"]))
-                            {
-                                MessageBox.Show("The length of the Mainboard:  " + textBox1.Text.Trim() + "   is not match!");
-                            }
-                            else
-                            {
-                                listBox1.Items.Add(textBox1.Text.Trim());
-                                Tip.Text = "Please scan the Panel number";
-                            }
-                            textBox1.Text = "";                         
-                            break;
-                        }
-                    case 2:
-                        {
-                            if (textBox1.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Panel"]))
-                            {
-                                MessageBox.Show("The length of the Panel:  " + textBox1.Text.Trim() + "   is not match!");
-                            }
-                            else
-                            {
-                                listBox1.Items.Add(textBox1.Text.Trim());
-                                try
-                                {
-                                    int n = MSSQLHelper.ExecuteSql("insert into OnlineScanning (TVSN,Mainboard,Panel)values( '" + listBox1.Items[0].ToString() + "','" + listBox1.Items[1].ToString() + "','" + listBox1.Items[2].ToString() + "')");
-                                    if (n > 0)
-                                    {
-                                        if (listBox2.Items.Count >= 100)
-                                            listBox2.Items.Clear();
-                                        listBox2.Items.Add(listBox1.Items[0].ToString());
-                                        listBox1.Items.Clear();
-                                        num += 1;
-                                        label1.Text = num.ToString();
-                                        label5.Text = "PASS";
-                                        label5.BackColor = Color.Green;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show(ex.Message);
-                                    listBox1.Items.Clear();
-                                    label5.Text = "FAIL";
-                                    label5.BackColor = Color.Red;
-                                    Tip.Text=ex.Message;
-                                }
-                                
-                            }
-                            textBox1.Text = "";
-                            break;
-                        }
-                    default:
-                        {
-                            MessageBox.Show("Program error,please restart the software");
-                            Tip.Text = "Please scan the TVSN";
-                            break;
-                        }
+                    break;
                 }
-
-
-
+                case 1:
+                {
+                    if (textBox1.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Mainboard"]))
+                    {
+                        MessageBox.Show("The length of the Mainboard:  " + textBox1.Text.Trim() + "   is not match!");
+                    }
+                    else
+                    {
+                        listBox1.Items.Add(textBox1.Text.Trim());
+                        Tip.Text = "Please scan the Panel number";
+                    }
+                    textBox1.Text = "";                         
+                    break;
+                }
+                case 2:
+                {
+                    if (textBox1.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Panel"]))
+                    {
+                        MessageBox.Show("The length of the Panel:  " + textBox1.Text.Trim() + "   is not match!");
+                    }
+                    else
+                    {
+                        listBox1.Items.Add(textBox1.Text.Trim());
+                        try
+                        {
+                            int n = MSSQLHelper.ExecuteSql("insert into OnlineScanning (TVSN,Mainboard,Panel)values( '" + listBox1.Items[0].ToString() + "','" + listBox1.Items[1].ToString() + "','" + listBox1.Items[2].ToString() + "')");
+                            if (n > 0)
+                            {
+                                if (listBox2.Items.Count >= 100)
+                                    listBox2.Items.Clear();
+                                listBox2.Items.Add(listBox1.Items[0].ToString());
+                                listBox1.Items.Clear();
+                                num += 1;
+                                label1.Text = num.ToString();
+                                label5.Text = "PASS";
+                                label5.BackColor = Color.Green;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                            listBox1.Items.Clear();
+                            label5.Text = "FAIL";
+                            label5.BackColor = Color.Red;
+                            Tip.Text=ex.Message;
+                        }
+                                
+                    }
+                    textBox1.Text = "";
+                    break;
+                }
+                default:
+                {
+                    MessageBox.Show("Program error,please restart the software");
+                    Tip.Text = "Please scan the TVSN";
+                    break;
+                }
             }
         }
 
@@ -176,130 +172,125 @@ namespace online_offline_Scanning
 
         private void textBox2_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter) return;
+            switch (listBox4.Items.Count)
             {
-                switch (listBox4.Items.Count)
+                case 0:
                 {
-                    case 0:
-                        {
-                            if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["TVSN"]))
-                            {
-                                MessageBox.Show("The length of the TVSN:  " + textBox2.Text.Trim() + "  is not match!");
-                            }
-                            else
-                            {
-                                listBox4.Items.Add(textBox2.Text.Trim());
-                                label6.Text = "Please scan the left stand";
-                            }
-                            textBox2.Text = "";
+                    if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["TVSN"]))
+                    {
+                        MessageBox.Show("The length of the TVSN:  " + textBox2.Text.Trim() + "  is not match!");
+                    }
+                    else
+                    {
+                        listBox4.Items.Add(textBox2.Text.Trim());
+                        label6.Text = "Please scan the left stand";
+                    }
+                    textBox2.Text = "";
 
-                            break;
-                        }
-                    case 1:
-                        {
-                            if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Left stand"]))
-                            {
-                                MessageBox.Show("The length of the left stand:  " + textBox2.Text.Trim() + "   is not match!");
-                            }
-                            else
-                            {
-                                listBox4.Items.Add(textBox2.Text.Trim());
-                                label6.Text = "Please scan the right stand";
-                            }
-                            textBox2.Text = "";
-                            break;
-                        }
-                    case 2:
-                        {
-                            if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Right stand"]))
-                            {
-                                MessageBox.Show("The length of the right stand:  " + textBox2.Text.Trim() + "   is not match!");
-                            }
-                            else
-                            {
-                                listBox4.Items.Add(textBox2.Text.Trim());
-                                label6.Text = "Please scan the accessory bag";
-                            }
-                            textBox2.Text = "";
-                            break;
-                        }
-                    case 3:
-                        {
-                            if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Accessory bag"]))
-                            {
-                                MessageBox.Show("The length of the accessory bag:  " + textBox2.Text.Trim() + "   is not match!");
-                            }
-                            else
-                            {
-                                listBox4.Items.Add(textBox2.Text.Trim());
-                                try
-                                {
-                                    int onlineresult = Convert.ToUInt16(MSSQLHelper.GetSingle("select count(1) TVSN from OnlineScanning where TVSN='" + listBox4.Items[0].ToString() + "'"));
-                                    int resetresult = Convert.ToUInt16(MSSQLHelper.GetSingle("select count(1) TVSN from XMDataControl where TVSN='" + listBox4.Items[0].ToString().Replace("/","") + "' and TestResult is not null"));
-                                    if(onlineresult>0&&resetresult>0)
-                                    {
-                                        int n = MSSQLHelper.ExecuteSql("insert into OffLineScanning (TVSN,LeftStand,RightStand,Accessorybag)values( '" + listBox4.Items[0].ToString() + "','" + listBox4.Items[1].ToString() + "','" + listBox4.Items[2].ToString() + "','" + listBox4.Items[3].ToString() + "')");
-                                        if (n > 0)
-                                        {
-                                            if (listBox3.Items.Count >= 100)
-                                                listBox3.Items.Clear();
-                                            listBox3.Items.Add(listBox4.Items[0].ToString());
-                                            listBox4.Items.Clear();
-                                            num2 += 1;
-                                            label11.Text = num2.ToString();
-                                            label7.Text = "PASS";
-                                            label7.BackColor = Color.Green;
-                                            label6.Text = "Please scan the TVSN";
-                                        }
-                                    }
-                                    else if(onlineresult==0&&resetresult==0)
-                                    {
-                                        MessageBox.Show("Missing online scanning and factory reset");
-                                        listBox4.Items.Clear();
-                                        label7.Text = "FAIL";
-                                        label7.BackColor = Color.Red;
-                                        break;
-                                    }
-                                    else if(onlineresult==0)
-                                    {
-                                        MessageBox.Show("Missing online scanning");
-                                        listBox4.Items.Clear();
-                                        label7.Text = "FAIL";
-                                        label7.BackColor = Color.Red;
-                                        break;
-                                    }
-                                    else if (resetresult == 0)
-                                    {
-                                        MessageBox.Show("Missing factory reset");
-                                        listBox4.Items.Clear();
-                                        label7.Text = "FAIL";
-                                        label7.BackColor = Color.Red;
-                                        break;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show(ex.Message);
-                                    listBox4.Items.Clear();
-                                    label7.Text = "FAIL";
-                                    label7.BackColor = Color.Red;
-                                    label6.Text = ex.Message;
-                                }
-
-                            }
-                            textBox2.Text = "";
-                            break;
-                        }
-                    default:
-                        {
-                            MessageBox.Show("Program error,please restart the software");
-                            label6.Text = "Please scan the TVSN";
-                            break;
-                        }
+                    break;
                 }
+                case 1:
+                {
+                    if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Left stand"]))
+                    {
+                        MessageBox.Show("The length of the left stand:  " + textBox2.Text.Trim() + "   is not match!");
+                    }
+                    else
+                    {
+                        listBox4.Items.Add(textBox2.Text.Trim());
+                        label6.Text = "Please scan the right stand";
+                    }
+                    textBox2.Text = "";
+                    break;
+                }
+                case 2:
+                {
+                    if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Right stand"]))
+                    {
+                        MessageBox.Show("The length of the right stand:  " + textBox2.Text.Trim() + "   is not match!");
+                    }
+                    else
+                    {
+                        listBox4.Items.Add(textBox2.Text.Trim());
+                        label6.Text = "Please scan the accessory bag";
+                    }
+                    textBox2.Text = "";
+                    break;
+                }
+                case 3:
+                {
+                    if (textBox2.Text.Trim().Length != Convert.ToInt32(ConfigurationManager.AppSettings["Accessory bag"]))
+                    {
+                        MessageBox.Show("The length of the accessory bag:  " + textBox2.Text.Trim() + "   is not match!");
+                    }
+                    else
+                    {
+                        listBox4.Items.Add(textBox2.Text.Trim());
+                        try
+                        {
+                            int onlineresult = Convert.ToUInt16(MSSQLHelper.GetSingle("select count(1) TVSN from OnlineScanning where TVSN='" + listBox4.Items[0].ToString() + "'"));
+                            int resetresult = Convert.ToUInt16(MSSQLHelper.GetSingle("select count(1) TVSN from XMDataControl where TVSN='" + listBox4.Items[0].ToString().Replace("/","") + "' and TestResult is not null"));
+                            if(onlineresult>0&&resetresult>0)
+                            {
+                                int n = MSSQLHelper.ExecuteSql("insert into OffLineScanning (TVSN,LeftStand,RightStand,Accessorybag)values( '" + listBox4.Items[0].ToString() + "','" + listBox4.Items[1].ToString() + "','" + listBox4.Items[2].ToString() + "','" + listBox4.Items[3].ToString() + "')");
+                                if (n > 0)
+                                {
+                                    if (listBox3.Items.Count >= 100)
+                                        listBox3.Items.Clear();
+                                    listBox3.Items.Add(listBox4.Items[0].ToString());
+                                    listBox4.Items.Clear();
+                                    num2 += 1;
+                                    label11.Text = num2.ToString();
+                                    label7.Text = "PASS";
+                                    label7.BackColor = Color.Green;
+                                    label6.Text = "Please scan the TVSN";
+                                }
+                            }
+                            else if(onlineresult==0&&resetresult==0)
+                            {
+                                MessageBox.Show("Missing online scanning and factory reset");
+                                listBox4.Items.Clear();
+                                label7.Text = "FAIL";
+                                label7.BackColor = Color.Red;
+                                break;
+                            }
+                            else if(onlineresult==0)
+                            {
+                                MessageBox.Show("Missing online scanning");
+                                listBox4.Items.Clear();
+                                label7.Text = "FAIL";
+                                label7.BackColor = Color.Red;
+                                break;
+                            }
+                            else if (resetresult == 0)
+                            {
+                                MessageBox.Show("Missing factory reset");
+                                listBox4.Items.Clear();
+                                label7.Text = "FAIL";
+                                label7.BackColor = Color.Red;
+                                break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                            listBox4.Items.Clear();
+                            label7.Text = "FAIL";
+                            label7.BackColor = Color.Red;
+                            label6.Text = ex.Message;
+                        }
 
-
-
+                    }
+                    textBox2.Text = "";
+                    break;
+                }
+                default:
+                {
+                    MessageBox.Show("Program error,please restart the software");
+                    label6.Text = "Please scan the TVSN";
+                    break;
+                }
             }
         }
 

@@ -20,7 +20,11 @@ public class MSSQLHelper
 
 	}
 
-    // Execute SQL statement,return number of affected records 
+    /// <summary>
+    /// Execute SQL statement,return number of affected records 
+    /// </summary>
+    /// <param name="SQLString">SQL command</param>
+    /// <returns>return execute number</returns>
     public static int ExecuteSql(string SQLString)
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
@@ -42,8 +46,11 @@ public class MSSQLHelper
             }
         }
     }
-
-    //Get SQL statement running result(object)
+    /// <summary>
+    /// Get SQL statement running result(object)
+    /// </summary>
+    /// <param name="SQLString">SQL command</param>
+    /// <returns>object result</returns>
     public static object GetSingle(string SQLString)
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
@@ -72,7 +79,11 @@ public class MSSQLHelper
         }
     }
 
-    //Execute SQL statement,return Dataset
+    /// <summary>
+    /// Execute SQL statement,return Dataset
+    /// </summary>
+    /// <param name="SQLString"></param>
+    /// <returns>Return dataset format</returns>
     public static DataSet Query(string SQLString)
     {
         using (SqlConnection connection = new SqlConnection(connectionString))
